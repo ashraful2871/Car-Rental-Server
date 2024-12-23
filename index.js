@@ -58,6 +58,7 @@ async function run() {
     // await client.connect();
 
     const carCollection = client.db("carDB").collection("cars");
+    const carBookingCollection = client.db("carDB").collection("bookings");
 
     //create token
     app.post("/jwt", async (req, res) => {
@@ -91,16 +92,24 @@ async function run() {
     });
 
     //get all add cars
-    app.get("/add_car", async (req, res) => {
+    app.get("/cars", async (req, res) => {
       const result = await carCollection.find().toArray();
       res.send(result);
     });
 
     //car delete
-    app.delete("/add_car/:id", async (req, res) => {
+    app.delete("/cars/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await carCollection.deleteOne(query);
+      res.send(result);
+    });
+
+    //get all car specific user who added car
+    app.get("/cars/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { "userDetails.email": email };
+      const result = await carCollection.find(query).toArray();
       res.send(result);
     });
 
