@@ -93,7 +93,27 @@ async function run() {
 
     //get all add cars
     app.get("/cars", async (req, res) => {
-      const result = await carCollection.find().toArray();
+      const search = req.query.search;
+      const sort = req.query.sort;
+      let option = {};
+      if (sort === "date-dsc") {
+        option = { sort: { date: -1 } };
+      } else {
+        option = { sort: { rentalPrice: 1 } };
+      }
+
+      //search  by input field
+      let query = {
+        // model: {
+        //   $regex: search,
+        //   $options: "i",
+        // },
+        $or: [
+          { model: { $regex: search, $options: "i" } },
+          { location: { $regex: search, $options: "i" } },
+        ],
+      };
+      const result = await carCollection.find(query, option).toArray();
       res.send(result);
     });
 
@@ -131,6 +151,33 @@ async function run() {
       const query = { _id: new ObjectId(id) };
       const option = { upsert: true };
       const result = await carCollection.updateOne(query, updatedDoc, option);
+      res.send(result);
+    });
+
+    //save book data in database
+    app.post("/add_book", async (req, res) => {
+      const bookData = req.body;
+      // const query = { email: bookData.email };
+      const result = await carBookingCollection.insertOne(bookData);
+      res.send(result);
+    });
+
+    // get all book data for a specific user
+    app.get("/books/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { email: email };
+      const result = await carBookingCollection.find(query).toArray();
+      res.send(result);
+    });
+
+    app.patch("/booking_status_update/:id", async (req, res) => {
+      const id = req.params.id;
+      const { status } = req.body;
+      const filter = { _id: new ObjectId(id) };
+      const update = {
+        $set: { status },
+      };
+      const result = await carBookingCollection.updateOne(filter, update);
       res.send(result);
     });
 
