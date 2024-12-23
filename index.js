@@ -57,7 +57,6 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     // await client.connect();
 
-    const userCollection = client.db("A10DB").collection("test");
     const carCollection = client.db("carDB").collection("cars");
 
     //create token
@@ -91,7 +90,7 @@ async function run() {
       res.send(result);
     });
 
-    //get all cars
+    //get all add cars
     app.get("/add_car", async (req, res) => {
       const result = await carCollection.find().toArray();
       res.send(result);
@@ -102,6 +101,27 @@ async function run() {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await carCollection.deleteOne(query);
+      res.send(result);
+    });
+
+    //get a single car
+    app.get("/car/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await carCollection.findOne(query);
+      res.send(result);
+    });
+
+    //update car
+    app.put("/update_car/:id", async (req, res) => {
+      const id = req.params.id;
+      const carData = req.body;
+      const updatedDoc = {
+        $set: carData,
+      };
+      const query = { _id: new ObjectId(id) };
+      const option = { upsert: true };
+      const result = await carCollection.updateOne(query, updatedDoc, option);
       res.send(result);
     });
 
