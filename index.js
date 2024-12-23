@@ -3,7 +3,7 @@ const express = require("express");
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
 const app = express();
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const port = process.env.PORT || 5000;
 
 // Middleware
@@ -58,6 +58,7 @@ async function run() {
     // await client.connect();
 
     const userCollection = client.db("A10DB").collection("test");
+    const carCollection = client.db("carDB").collection("cars");
 
     //create token
     app.post("/jwt", async (req, res) => {
@@ -83,10 +84,24 @@ async function run() {
         .send({ success: true });
     });
 
-    //this route for test save data
-    app.post("/user", async (req, res) => {
-      const newUser = req.body;
-      const result = await userCollection.insertOne(newUser);
+    //add car
+    app.post("/add_car", async (req, res) => {
+      const newCar = req.body;
+      const result = await carCollection.insertOne(newCar);
+      res.send(result);
+    });
+
+    //get all cars
+    app.get("/add_car", async (req, res) => {
+      const result = await carCollection.find().toArray();
+      res.send(result);
+    });
+
+    //car delete
+    app.delete("/add_car/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await carCollection.deleteOne(query);
       res.send(result);
     });
 
@@ -103,11 +118,7 @@ async function run() {
 run().catch(console.dir);
 
 app.get("/", async (req, res) => {
-  // const user = req.user;
-  // if (!user) {
-  //   res.status(401).send({ message: "unauthorized access" });
-  // }
-  res.send(myData);
+  res.send("car server is running");
 });
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
