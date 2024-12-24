@@ -127,9 +127,17 @@ async function run() {
 
     //get all car specific user who added car
     app.get("/cars/:email", async (req, res) => {
+      const sort = req.query.sort;
+      let option = {};
+
+      if (sort === "dsc") {
+        option = { sort: { date: -1 } };
+      } else {
+        option = { sort: { rentalPrice: 1 } };
+      }
       const email = req.params.email;
       const query = { "userDetails.email": email };
-      const result = await carCollection.find(query).toArray();
+      const result = await carCollection.find(query, option).toArray();
       res.send(result);
     });
 
@@ -157,8 +165,24 @@ async function run() {
     //save book data in database
     app.post("/add_book", async (req, res) => {
       const bookData = req.body;
-      // const query = { email: bookData.email };
+
+      // if a user already booked in a car
+      const query = { email: bookData.email, bookId: bookData.bookId };
+      const alreadyExist = await carBookingCollection.findOne(query);
+      if (alreadyExist) {
+        return res.status(400).send("You Already Booked In This Car");
+      }
       const result = await carBookingCollection.insertOne(bookData);
+
+      //increase booking count
+      const filter = { _id: new ObjectId(bookData.bookId) };
+      const update = {
+        $inc: {
+          booking_count: 1,
+        },
+      };
+      const updateCount = await carCollection.updateOne(filter, update);
+
       res.send(result);
     });
 
