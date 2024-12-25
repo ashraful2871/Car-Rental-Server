@@ -2,6 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
+const cookieParser = require("cookie-parser");
 const app = express();
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const port = process.env.PORT || 5000;
@@ -9,17 +10,17 @@ const port = process.env.PORT || 5000;
 // Middleware
 app.use(
   cors({
-    origin: ["http://localhost:5173"],
-    credentials: true,
-    optionalSuccessStatus: 200,
+    origin: [
+      "http://localhost:5173",
+      "https://assignment-11-d815b.web.app",
+      "https://assignment-11-d815b.firebaseapp.com",
+    ],
+    credentials: true, // Required to include cookies in requests
   })
 );
-app.use(express.json());
 
-const myData = {
-  name: "Ash",
-  age: 21,
-};
+app.use(express.json());
+app.use(cookieParser());
 
 //assignment-11
 //YFmRRI0y6JyA8pAT
@@ -39,14 +40,15 @@ const client = new MongoClient(uri, {
 
 const verifyToken = (req, res, next) => {
   const token = req.cookies?.token;
-
   if (!token) {
-    return res.status(401).send({ message: "unauthorize access" });
+    return res.status(401).send({ message: "Unauthorized access" });
   }
-  jwt.verify(token, "secret", (err, decoded) => {
+
+  jwt.verify(token, process.env.SECRET_KEY, (err, decoded) => {
     if (err) {
-      return res.status(401).send({ message: "unauthorize access" });
+      return res.status(401).send({ message: "Unauthorized access" });
     }
+
     req.user = decoded;
     next();
   });
@@ -63,7 +65,9 @@ async function run() {
     //create token
     app.post("/jwt", async (req, res) => {
       const email = req.body;
-      const token = jwt.sign(email, "secret", { expiresIn: "5h" });
+      const token = jwt.sign(email, process.env.SECRET_KEY, {
+        expiresIn: "5h",
+      });
       res
         .cookie("token", token, {
           httpOnly: true,
@@ -99,7 +103,7 @@ async function run() {
       if (sort === "date-dsc") {
         option = { sort: { date: -1 } };
       } else {
-        option = { sort: { rentalPrice: 1 } };
+        option = { sort: { date: 1 } };
       }
 
       //search  by input field
@@ -119,7 +123,11 @@ async function run() {
 
     //listings car
     app.get("/listings", async (req, res) => {
-      const result = await carCollection.find({}).limit(6).toArray();
+      const result = await carCollection
+        .find()
+        .sort({ date: -1 })
+        .limit(6)
+        .toArray();
       res.send(result);
     });
 
@@ -132,23 +140,27 @@ async function run() {
     });
 
     //get all car specific user who added car
-    app.get("/cars/:email", async (req, res) => {
-      const sort = req.query.sort;
-      let option = {};
-
-      if (sort === "dsc") {
-        option = { sort: { date: -1 } };
-      } else {
-        option = { sort: { rentalPrice: 1 } };
-      }
+    app.get("/cars/:email", verifyToken, async (req, res) => {
       const email = req.params.email;
+      const decodedMail = req?.user?.email;
+
+      if (decodedMail !== email) {
+        return res.status(403).send({ message: "Forbidden access" });
+      }
+
+      // Proceed with the query
+      const sort = req.query.sort;
+      const option =
+        sort === "dsc" ? { sort: { date: -1 } } : { sort: { date: 1 } };
       const query = { "userDetails.email": email };
+
       const result = await carCollection.find(query, option).toArray();
       res.send(result);
     });
 
     //get a single car
     app.get("/car/:id", async (req, res) => {
+      console.log(email);
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await carCollection.findOne(query);
@@ -195,6 +207,7 @@ async function run() {
     // get all book data for a specific user
     app.get("/books/:email", async (req, res) => {
       const email = req.params.email;
+
       const query = { email: email };
       const result = await carBookingCollection.find(query).toArray();
       res.send(result);
