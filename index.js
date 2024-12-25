@@ -25,7 +25,7 @@ app.use(cookieParser());
 //assignment-11
 //YFmRRI0y6JyA8pAT
 
-const uri = `mongodb+srv://assignment-11:YFmRRI0y6JyA8pAT@cluster0.jq7qb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
+const uri = `mongodb+srv://${process.env.USER_DB}:${process.env.USER_PASS}@cluster0.jq7qb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
@@ -160,7 +160,6 @@ async function run() {
 
     //get a single car
     app.get("/car/:id", async (req, res) => {
-      console.log(email);
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await carCollection.findOne(query);
