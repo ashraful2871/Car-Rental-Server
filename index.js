@@ -117,6 +117,12 @@ async function run() {
       res.send(result);
     });
 
+    //listings car
+    app.get("/listings", async (req, res) => {
+      const result = await carCollection.find({}).limit(6).toArray();
+      res.send(result);
+    });
+
     //car delete
     app.delete("/cars/:id", async (req, res) => {
       const id = req.params.id;
