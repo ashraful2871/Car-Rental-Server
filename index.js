@@ -205,9 +205,13 @@ async function run() {
     });
 
     // get all book data for a specific user
-    app.get("/books/:email", async (req, res) => {
+    app.get("/books/:email", verifyToken, async (req, res) => {
       const email = req.params.email;
+      const decodedMail = req?.user?.email;
 
+      if (decodedMail !== email) {
+        return res.status(403).send({ message: "Forbidden access" });
+      }
       const query = { email: email };
       const result = await carBookingCollection.find(query).toArray();
       res.send(result);
