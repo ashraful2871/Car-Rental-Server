@@ -15,15 +15,12 @@ app.use(
       "https://assignment-11-d815b.web.app",
       "https://assignment-11-d815b.firebaseapp.com",
     ],
-    credentials: true, // Required to include cookies in requests
+    credentials: true,
   })
 );
 
 app.use(express.json());
 app.use(cookieParser());
-
-//assignment-11
-//YFmRRI0y6JyA8pAT
 
 const uri = `mongodb+srv://${process.env.USER_DB}:${process.env.USER_PASS}@cluster0.jq7qb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
@@ -108,10 +105,6 @@ async function run() {
 
       //search  by input field
       let query = {
-        // model: {
-        //   $regex: search,
-        //   $options: "i",
-        // },
         $or: [
           { model: { $regex: search, $options: "i" } },
           { location: { $regex: search, $options: "i" } },
@@ -227,11 +220,11 @@ async function run() {
       res.send(result);
     });
 
-    // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
-    console.log(
-      "Pinged your deployment. You successfully connected to MongoDB!"
-    );
+    // // Send a ping to confirm a successful connection
+    // await client.db("admin").command({ ping: 1 });
+    // console.log(
+    //   "Pinged your deployment. You successfully connected to MongoDB!"
+    // );
   } finally {
     // Ensures that the client will close when you finish/error
     // await client.close();
