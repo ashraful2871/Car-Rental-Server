@@ -5,6 +5,8 @@ const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
 const app = express();
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
+const services = require("./carsData/services");
+const sell = require("./carsData/ourSell.");
 const port = process.env.PORT || 5000;
 
 // Middleware
@@ -210,7 +212,18 @@ async function run() {
       const result = await carBookingCollection.updateOne(filter, update);
       res.send(result);
     });
+    //add extra data for home page
+    app.get("/services", async (req, res) => {
+      res.json(services);
+    });
+
+    //add another extra data
+    app.get("/sell", async (req, res) => {
+      res.json(sell);
+    });
   } finally {
+    // Ensures that the client will close when you finish/error
+    // await client.close();
   }
 }
 run().catch(console.dir);
