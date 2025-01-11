@@ -14,8 +14,8 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",
-      "https://assignment-11-d815b.web.app",
-      "https://assignment-11-d815b.firebaseapp.com",
+      "https://car-rent-67bee.web.app",
+      "https://car-rent-67bee.firebaseapp.com",
     ],
     credentials: true,
   })
@@ -81,14 +81,22 @@ async function run() {
     });
 
     //clear token
-    app.get("/logout", async (req, res) => {
+    // app.get("/logout", async (req, res) => {
+    //   res
+    //     .clearCookie("token", {
+    //       httpOnly: true,
+    //       maxAge: 0,
+    //       secure: process.env.NODE_ENV === "production",
+    //       sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+    //     })
+    //     .send({ success: true });
+    // });
+
+    app.post("/logout", async (req, res) => {
+      const user = req.body;
+      console.log("logging out", user);
       res
-        .clearCookie("token", {
-          httpOnly: true,
-          maxAge: 0,
-          secure: process.env.NODE_ENV === "production",
-          sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
-        })
+        .clearCookie("token", { maxAge: 0, sameSite: "none", secure: true })
         .send({ success: true });
     });
 
@@ -126,7 +134,7 @@ async function run() {
       const result = await carCollection
         .find()
         .sort({ date: -1 })
-        .limit(6)
+        .limit(8)
         .toArray();
       res.send(result);
     });
