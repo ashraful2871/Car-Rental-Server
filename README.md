@@ -1,8 +1,8 @@
-# 🚗 Car Rent Platform - Backend
+# 🚗 Car Rent Platform - Server
 
 This is the **backend API** for the Car Rent Platform, built using **Node.js, Express.js, MongoDB, and JWT authentication**.
 
-🚀 **Live API URL:** [Backend Deployed on Vercel](https://assignment-11-sable.vercel.app)
+🚀 **Live API URL:** [Server Deployed on Vercel](https://assignment-11-sable.vercel.app)
 
 ---
 
