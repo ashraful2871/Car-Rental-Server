@@ -136,8 +136,33 @@ This backend uses JWT (JSON Web Token) for secure authentication.
    VITE_API_URL=HERE_IS_YOUR_BACKEND_API_URL
    ```
 6. **Rebuild and redeploy the frontend.**
+   Here's the **after-deployment update process** for your backend:
 
----
+### 🔄 **Update Backend After Deployment on Vercel**
+
+If you make changes to the backend **after deployment**, follow these steps:
+
+1. **Pull the latest code or make updates locally.**
+2. **Deploy the changes to Vercel:**
+   ```sh
+   vercel --prod
+   ```
+3. **If environment variables change, update them on Vercel:**
+   ```sh
+   vercel env add USER_DB assignment-11
+   vercel env add USER_PASS NEW_DATABASE_PASSWORD
+   vercel env add SECRET_KEY NEW_SECRET_KEY
+   ```
+4. **Restart the Vercel project (if needed):**
+   ```sh
+   vercel redeploy
+   ```
+5. **Check Vercel logs to confirm changes:**
+   ```sh
+   vercel logs
+   ```
+
+## Now your **backend changes are live!** 🚀 Let me know if you need further refinements. 😊
 
 ## 📦 Dependencies
 
