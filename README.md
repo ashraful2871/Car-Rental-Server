@@ -2,7 +2,7 @@
 
 This is the **backend API** for the Car Rent Platform, built using **Node.js, Express.js, MongoDB, and JWT authentication**.
 
-🚀 **Live API URL:** [Backend Deployed on Vercel](https://your-backend.vercel.app/)
+🚀 **Live API URL:** [Backend Deployed on Vercel](https://assignment-11-sable.vercel.app)
 
 ---
 
@@ -36,7 +36,7 @@ This is the **backend API** for the Car Rent Platform, built using **Node.js, Ex
 1. **Clone the repository:**
 
    ```sh
-   git clone https://github.com/your-username/car-rental-backend.git
+   git clone https://github.com/ashraful2871/Car-Rental-Server.git
    cd car-rental-backend
 
    ```
@@ -67,7 +67,7 @@ This is the **backend API** for the Car Rent Platform, built using **Node.js, Ex
 Create a `.env` file in the root folder and add:
 
 ```sh
-USER_DB=assignment-11
+USER_DB=ENTER_YOUR_DATABASE_USER_HERE
 USER_PASS=ENTER_YOUR_DATABASE_PASSWORD_HERE
 SECRET_KEY=ENTER_YOUR_SECRET_KEY_HERE
 ```
@@ -91,70 +91,25 @@ SECRET_KEY=ENTER_YOUR_SECRET_KEY_HERE
 
 ## 🗄️ Database Configuration (MongoDB)
 
-1. **Connect MongoDB in your project** using Mongoose or native driver:
+1. **Connect MongoDB in your project** change your MongoDB uri:
+   The backend connects to MongoDB Atlas using credentials from the .env file.
+   Make sure your MongoDB Atlas database is set up and the credentials are correct.
 
    ```js
-   const { MongoClient } = require("mongodb");
-   require("dotenv").config();
-
    const uri = `mongodb+srv://${process.env.USER_DB}:${process.env.USER_PASS}@cluster0.mongodb.net/?retryWrites=true&w=majority`;
-
-   async function connectDB() {
-     const client = new MongoClient(uri);
-     try {
-       await client.connect();
-       console.log("Database connected successfully");
-     } catch (error) {
-       console.error("Database connection failed:", error);
-     }
-   }
-
-   module.exports = connectDB;
    ```
 
 2. **Make sure your `.env` file is properly configured.**
 
 ---
 
-## 🔐 JWT Authentication
+## 🔐 Authentication
 
-### 🔑 Generating a JWT Token
+This backend uses JWT (JSON Web Token) for secure authentication.
 
-When a user logs in, the server generates a **JWT token**:
-
-```js
-const jwt = require("jsonwebtoken");
-
-const user = { id: "user123", email: "user@example.com" };
-const token = jwt.sign(user, process.env.SECRET_KEY, { expiresIn: "1h" });
-
-console.log("Generated JWT:", token);
-```
-
-### 🔒 Protecting Routes with JWT
-
-Use middleware to protect API routes:
-
-```js
-const jwt = require("jsonwebtoken");
-
-function authenticateToken(req, res, next) {
-  const token = req.headers["authorization"];
-  if (!token) return res.status(401).json({ message: "Access Denied" });
-
-  jwt.verify(token, process.env.SECRET_KEY, (err, user) => {
-    if (err) return res.status(403).json({ message: "Invalid Token" });
-    req.user = user;
-    next();
-  });
-}
-
-app.get("/protected-route", authenticateToken, (req, res) => {
-  res.json({ message: "You have access!", user: req.user });
-});
-```
-
----
+- JWT tokens are generated upon login.
+- Protected API routes require a valid JWT token for access.
+- Tokens are stored securely and used for user verification.
 
 ## 🚀 Deploy on Vercel
 
@@ -178,7 +133,7 @@ app.get("/protected-route", authenticateToken, (req, res) => {
    ```
 5. **Get the deployed API URL** and update your frontend `.env.local` file:
    ```sh
-   VITE_BACKEND_URL=https://your-backend.vercel.app
+   VITE_API_URL=HERE_IS_YOUR_BACKEND_API_URL
    ```
 6. **Rebuild and redeploy the frontend.**
 
@@ -203,20 +158,8 @@ npm install
 
 ## 📜 License
 
-This project is **open-source** and available under the **MIT License**.
+This project is **open-source** .
 
 ---
 
 🚀 **Happy Coding!** 🚀
-
-```
-
-### ✅ What's Included?
-- **Step-by-step backend setup**
-- **JWT authentication guide**
-- **MongoDB connection setup**
-- **Vercel deployment instructions**
-- **Neatly structured README**
-
-Let me know if you need **any modifications!** 🚀😊
-```
