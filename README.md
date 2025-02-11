@@ -13,8 +13,9 @@ This is the **backend API** for the Car Rent Platform, built using **Node.js, Ex
 - [Environment Variables](#environment-variables)
 - [Run Locally](#run-locally)
 - [Database Configuration](#database-configuration)
-- [JWT Authentication](#jwt-authentication)
+- [Authentication](#authentication)
 - [Deploy on Vercel](#deploy-on-vercel)
+- [Update After Deployment](#update-after-deployment)
 - [Dependencies](#dependencies)
 - [License](#license)
 
