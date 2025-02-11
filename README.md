@@ -1,6 +1,3 @@
-Here’s your **README** file for the **backend**, including **MongoDB setup, JWT authentication, and Vercel deployment**.
-
-````markdown
 # 🚗 Car Rent Platform - Backend
 
 This is the **backend API** for the Car Rent Platform, built using **Node.js, Express.js, MongoDB, and JWT authentication**.
@@ -37,11 +34,12 @@ This is the **backend API** for the Car Rent Platform, built using **Node.js, Ex
 ## 🛠 Installation
 
 1. **Clone the repository:**
+
    ```sh
    git clone https://github.com/your-username/car-rental-backend.git
    cd car-rental-backend
+
    ```
-````
 
 2. **Install dependencies:**
    ```sh
