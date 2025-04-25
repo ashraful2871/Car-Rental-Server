@@ -10,6 +10,7 @@ const sell = require("./carsData/ourSell.");
 const port = process.env.PORT || 5000;
 
 // Middleware
+// Middleware
 app.use(
   cors({
     origin: [
@@ -26,6 +27,13 @@ app.use(cookieParser());
 
 const uri = `mongodb+srv://${process.env.USER_DB}:${process.env.USER_PASS}@cluster0.jq7qb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
+// const cookieOptions = {
+//   httpOnly: true,
+//   secure: process.env.NODE_ENV === "production",
+//   sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+// };
+
+// Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
   serverApi: {
     version: ServerApiVersion.v1,
@@ -73,6 +81,18 @@ async function run() {
         .send({ success: true });
     });
 
+    //clear token
+    // app.get("/logout", async (req, res) => {
+    //   res
+    //     .clearCookie("token", {
+    //       httpOnly: true,
+    //       maxAge: 0,
+    //       secure: process.env.NODE_ENV === "production",
+    //       sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+    //     })
+    //     .send({ success: true });
+    // });
+
     app.post("/logout", async (req, res) => {
       const user = req.body;
       console.log("logging out", user);
@@ -91,7 +111,7 @@ async function run() {
     app.get("/cars", async (req, res) => {
       const search = req.query.search || "";
       const sort = req.query.sort || "";
-      const page = parseInt(req.query.page) || 1;
+      const page = parseInt(req.query.page) || 1; // Default to page 1
       const limit = 8;
       const skip = (page - 1) * limit;
 
@@ -244,6 +264,7 @@ async function run() {
     });
   } finally {
     // Ensures that the client will close when you finish/error
+    // await client.close();
   }
 }
 run().catch(console.dir);
