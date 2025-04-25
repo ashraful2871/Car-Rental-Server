@@ -108,28 +108,46 @@ async function run() {
       res.send(result);
     });
 
-    //get all add cars
     app.get("/cars", async (req, res) => {
-      const search = req.query.search;
-      const sort = req.query.sort;
+      const search = req.query.search || "";
+      const sort = req.query.sort || "";
+      const page = parseInt(req.query.page) || 1; // Default to page 1
+      const limit = 8; // 8 items per page
+      const skip = (page - 1) * limit; // Calculate items to skip
+
       let option = {};
       if (sort === "date-dsc") {
         option = { sort: { date: -1 } };
-      } else {
+      } else if (sort === "date-asc") {
         option = { sort: { date: 1 } };
       }
 
-      //search  by input field
+      // Search by input field
       let query = {
         $or: [
           { model: { $regex: search, $options: "i" } },
           { location: { $regex: search, $options: "i" } },
         ],
       };
-      const result = await carCollection.find(query, option).toArray();
-      res.send(result);
-    });
 
+      try {
+        const totalCars = await carCollection.countDocuments(query); // Total matching documents
+        const result = await carCollection
+          .find(query, option)
+          .skip(skip)
+          .limit(limit)
+          .toArray();
+
+        res.send({
+          cars: result,
+          totalCars,
+          totalPages: Math.ceil(totalCars / limit),
+          currentPage: page,
+        });
+      } catch (error) {
+        res.status(500).send({ message: "Error fetching cars", error });
+      }
+    });
     //listings car
     app.get("/listings", async (req, res) => {
       const result = await carCollection
